@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot with API</title>
+  <style>
+    #chat-container {
+      width: 300px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+    }
+    #chat-box {
+      height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+      padding: 5px;
+    }
+    #user-input {
+      width: calc(100% - 60px);
+      padding: 5px;
+    }
+    #send-button {
+      width: 75px;
+      padding: 5px;
+    }
+    .message {
+      margin-bottom: 10px;
+    }
+    .user-message {
+      text-align: right;
+    }
+    .bot-message {
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat-container">
+    <div id="chat-box"></div>
+    <input type="text" id="user-input" placeholder="Schreibe deine Nachricht..." />
+    <button id="send-button">Versende</button>
+  </div>
+
+  <script>
+    const apiUrl = 'http://127.0.0.1:8000/process'; // Replace with your API endpoint
+    const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
+
+    const sendButton = document.getElementById('send-button');
+    const userInput = document.getElementById('user-input');
+    const chatBox = document.getElementById('chat-box');
+
+    async function sendMessageToAPI(message) {
+      console.log(message);
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+	    'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({ message })
+        });
+
+        if (!response.ok) throw new Error(`Error: ${response.status}`);
+
+        const data = await response.json();
+
+        return data.chatbot_reply; // Assuming the API returns a "reply" field
+      } catch (error) {
+        console.error(error);
+        return "Sorry, I couldn't process your request.";
+      }
+    }
+
+    sendButton.addEventListener('click', async () => {
+      const userMessage = userInput.value.trim();
+      
+      if (userMessage) {
+        // Display user's message
+        const userMessageDiv = document.createElement('div');
+        userMessageDiv.classList.add('message', 'user-message');
+        userMessageDiv.textContent = `You: ${userMessage}`;
+        chatBox.appendChild(userMessageDiv);
+
+        // Clear input field
+        userInput.value = '';
+
+        // Send the message to the API and get the response
+        const botReply = await sendMessageToAPI(userMessage);
+	console.log("botReply", botReply);
+        // Display bot's response
+        const botMessageDiv = document.createElement('div');
+        botMessageDiv.classList.add('message', 'bot-message');
+        botMessageDiv.textContent = `Bot: ${botReply}`;
+        chatBox.appendChild(botMessageDiv);
+
+        // Auto-scroll to the latest message
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    });
+  </script>
+</body>
+</html>
+
