@@ -10,6 +10,11 @@ chatbot = ChatBot('GermanBot')
 trainer = ChatterBotCorpusTrainer(chatbot)
 
 # Train the chatbot on a specific language corpus (e.g., German)
-trainer.train("chatterbot.corpus.german")
+trainer.train("chatterbot.corpus.german",
+              "chatterbot.corpus.german.greetings",
+              "chatterbot.corpus.german.conversations"
+             )
+
+print("Model trainied on German language.")
 
 
