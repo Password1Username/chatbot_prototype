@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from chatbot_model import chatbot
+from chatbot_model import service_bot
+from chatbot_business_logic import train_with_business_logic
 
 
 app = FastAPI()
@@ -12,8 +13,7 @@ origins = [
     "http://127.0.0.2:8080/index.html" # CHANGE to Wordpress url
     "http://localhost.tiangolo.com",
     "https://localhost.tiangolo.com",
-    "http://localhost",
-
+    "http://localhost"
     ]
 
 # Add CORS middleware to the FastAPI application
@@ -25,6 +25,15 @@ app.add_middleware(
     allow_headers=["*"],            # Allow all headers
 )
 
+
+@app.post("/train")
+async def train_model():
+    try:
+        train_with_business_logic()
+        return {"status": "success"}
+       
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Processing error: {str(e)}")
 
 
 @app.post("/process")
@@ -45,7 +54,7 @@ async def process_request(data: dict, request: Request):
         
         
 def interact_with_chatbot(input_message):
-    response = chatbot.get_response(input_message)
+    response = service_bot.get_response(input_message)
     output_message = str(response)
     print(output_message)
     return output_message

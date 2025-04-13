@@ -4,10 +4,10 @@ from chatterbot.trainers import ChatterBotCorpusTrainer
 
 
 # Create a chatbot instance
-chatbot = ChatBot('GermanBot')
+service_bot = ChatBot('GermanBot')
 
 # Set up the trainer
-trainer = ChatterBotCorpusTrainer(chatbot)
+trainer = ChatterBotCorpusTrainer(service_bot)
 
 # Train the chatbot on a specific language corpus (e.g., German)
 trainer.train("chatterbot.corpus.german",
@@ -15,6 +15,6 @@ trainer.train("chatterbot.corpus.german",
               "chatterbot.corpus.german.conversations"
              )
 
-print("Model trainied on German language.")
+print("Model trained on German language.")
 
 
